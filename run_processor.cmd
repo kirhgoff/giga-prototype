@@ -1,2 +1,2 @@
 @rem -Dcom.gs.licensekey=Apr 3, 2015~Moex_DEV@W3WGkjbQhPFVNMtPQsSx#PREMIUM^10.0XAPPremium%UNBOUND+UNLIMITED
-java -classpath .;C:\DevTools\gigaspaces-xap-premium-10.0.1-ga\ -Djava.ext.dirs=C:\DevTools\gigaspaces-xap-premium-10.0.1-ga\lib\required\ EmbeddedProcessor
+java -Xmx512m -Xms512m -classpath .;C:\DevTools\gigaspaces-xap-premium-10.0.1-ga\ -Djava.ext.dirs=C:\DevTools\gigaspaces-xap-premium-10.0.1-ga\lib\required\ EmbeddedProcessor

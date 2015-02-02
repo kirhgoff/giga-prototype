@@ -1,60 +1,73 @@
-import com.j_spaces.core.IJSpace;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
-import org.openspaces.core.space.UrlSpaceConfigurer;
 
-import org.apache.commons.logging.Log; 
-import org.apache.commons.logging.LogFactory; 
+import java.util.function.Function;
 
-import java.math.BigDecimal;
-import java.util.Random;
+class TestResult {
+
+  private String testName;
+  private int count;
+  private double average;
+  private double throughput;
+
+  public TestResult (String testName, int count, double average, double throughput) {
+
+    this.testName = testName;
+    this.count = count;
+    this.average = average;
+    this.throughput = throughput;
+  }
+
+  public String toString () {
+    return "Test[" + testName + "] count=" + count + ", avg=" + average + " ms, throughput=" + throughput + " obj per sec.";
+  }
+}
+
+interface MessageFactory {
+  Object create(int index);
+  String getTestName();
+}
 
 public class Feeder {
   private static Log logger = LogFactory.getLog(Feeder.class);
 
-  private static final String CHARS = "qwertyuiop[]asdfghjkl;'zxcvbnm,.1234567890-=";
-  private static final double RANGE_MAX = Double.MAX_VALUE;
-  private static final double RANGE_MIN = Double.MIN_VALUE;
-
   private GigaSpace gigaSpace;
 
   public Feeder(GigaSpace gigaSpace) {
-       this.gigaSpace = gigaSpace;
+    this.gigaSpace = gigaSpace;
   }
 
-  public void feed (int count) throws Exception {
-    SmallMessage [] SmallMessages = prepareSmallMessages(count);
+  public TestResult runTest (Class factoryClass, int count) throws Exception {
+    //Generate objects
+    MessageFactory factory = (MessageFactory) factoryClass.newInstance();
+    Object[] messages = generateObjects(count, factory);
+
+    //Run simple test
     long startTime = System.currentTimeMillis();
-    for(int i=0; i < count; i ++){
-      gigaSpace.write (SmallMessages[i]);
-    }
-    long timeRunningMillis = System.currentTimeMillis() - startTime; 
+    feed (messages);
+    long timeRunningMillis = System.currentTimeMillis() - startTime;
+
+    //Calculate stats
     double average = ((double)timeRunningMillis)/count;
-    double throuputSec = count*1000/timeRunningMillis;
+    double throughputSec = count*1000/timeRunningMillis;
 
-    System.out.println("Average time per object: " + average + " ms, throughput: " + throuputSec + " objects per sec");
+    return new TestResult(factory.getTestName (), count, average, throughputSec);
   }
 
-  public SmallMessage [] prepareSmallMessages (int count) {
-    Random random = new Random();          
-    SmallMessage [] SmallMessages = new SmallMessage [count];    
+  private Object[] generateObjects(int count, MessageFactory factory) {
+    Object [] messages = new Object [count];
     for(int i=0; i < count; i ++){
-      SmallMessages[i] = new SmallMessage (i, generateString(random, CHARS, 20), generarateBigDecimal(random));
+      messages[i] = factory.create(i);
     }
-    return SmallMessages;    
+    return messages;
   }
 
-  public static String generateString(Random random, String characters, int length) {
-    char[] text = new char[length];
-    for (int i = 0; i < length; i++) {
-        text[i] = characters.charAt(random.nextInt(characters.length()));
+  public void feed (Object [] messages) throws Exception {
+    int count = messages.length;
+    for(int i=0; i < count; i ++){
+      gigaSpace.write (messages[i]);
     }
-    return new String(text);
-  }
-
-  public static BigDecimal generarateBigDecimal (Random random) {
-    double randomValue = RANGE_MIN + (RANGE_MAX - RANGE_MIN) * random.nextDouble();
-    return new BigDecimal (randomValue);
   }
 
 }

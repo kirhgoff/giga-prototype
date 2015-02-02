@@ -1,1 +1,2 @@
-# giga-prototype - sample project to run performance tests on gigaspaces
+# giga-prototype 
+Sample project to run performance tests on gigaspaces

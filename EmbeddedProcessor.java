@@ -20,6 +20,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.j_spaces.core.IJSpace;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public class EmbeddedProcessor {
   public static final String SPACE_NAME = "space";
   private static Log logger = LogFactory.getLog(EmbeddedProcessor.class);
@@ -50,22 +54,38 @@ public class EmbeddedProcessor {
       admin.close();
    }
 
-    // logger.info("Space found, starting listener");
-    // SimpleNotifyEventListenerContainer eventListener = new SimpleNotifyContainerConfigurer(gigaSpace)
-    //   .eventListenerAnnotation(new Object() {
-    //    	@SpaceDataEvent
-    //     public void eventHappened(Message data) {
-    //     	logger.info("Got notification " + data);
-    //     }
-    //   })
-    //   .notifyContainer();
-
-    // eventListener.start();
-
     logger.info("Starting write loop");
+    Class [] tests = new Class [] {
+//        Tests.SmallMessageSimpleIndicesTest.class,
+        Tests.SmallMessageCompexKeyTest.class,
+//        Tests.SmallMessageCompoundIndexTest.class,
+        Tests.SmallMessageCompexKeyCompoundIndexTest.class
+    };
+
+    List<TestResult> results = new LinkedList<>();
+
     Feeder feeder = new Feeder (gigaSpace);
-    for (int i = 0; i < 5; i ++) {
-      feeder.feed(10000);
+    for (Class testClass : tests) {
+      for (int i = 0; i < 10; i++) {
+        TestResult result = feeder.runTest(testClass, 10000);
+        System.out.println(result);
+        results.add(result);
+      }
     }
+
+    //results.stream().forEach(System.out::println);
   }
 }
+
+// logger.info("Space found, starting listener");
+// SimpleNotifyEventListenerContainer eventListener = new SimpleNotifyContainerConfigurer(gigaSpace)
+//   .eventListenerAnnotation(new Object() {
+//    	@SpaceDataEvent
+//     public void eventHappened(Message data) {
+//     	logger.info("Got notification " + data);
+//     }
+//   })
+//   .notifyContainer();
+
+// eventListener.start();
+
