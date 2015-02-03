@@ -6,7 +6,7 @@
 - Start run.cmd and wait till 10 iterations to be run
 
 Sample run results are:
-
+```
 2015-02-03 13:41:27,662  INFO [com.gigaspaces.core.common] - Space [eifSpace_container:eifSpace] with url [/./eifSpace?schema=default&groups=gigaspaces-10.0.1-XAPPremium-ga&state=started] started successfully
 2015-02-03 13:41:28,025  INFO [EmbeddedProcessor] - Starting write loop
 Test[SmallMessageSimpleIndices] count=10000, avg=0.1594 ms, throughput=6273.0 obj per sec.
@@ -21,4 +21,4 @@ Test[SmallMessageCompoundIndex] count=10000, avg=0.0439 ms, throughput=22779.0 o
 Test[SmallMessageComplexKeyCompoundIndex] count=10000, avg=0.0589 ms, throughput=16977.0 obj per sec. 
 Test[SmallMessageComplexKeyCompoundIndex] count=10000, avg=0.0372 ms, throughput=26881.0 obj per sec. 
 Test[SmallMessageComplexKeyCompoundIndex] count=10000, avg=0.0396 ms, throughput=25252.0 obj per sec. 
-                                                                                                                                
+```
