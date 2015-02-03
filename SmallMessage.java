@@ -1,3 +1,5 @@
+import com.gigaspaces.annotation.pojo.CompoundSpaceIndex;
+import com.gigaspaces.annotation.pojo.CompoundSpaceIndexes;
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 import com.gigaspaces.annotation.pojo.SpaceIndex;
@@ -7,21 +9,24 @@ import com.gigaspaces.metadata.index.SpaceIndexType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@CompoundSpaceIndexes({ @CompoundSpaceIndex(paths = {"info", "info2", "price2"})})
 @SpaceClass
-public class SmallMessageCompexKey implements Serializable {
+public class SmallMessage implements Serializable {
   static final long serialVersionUID = 162512L;
 
   private String id;
   private Integer amount;
   private String info;
+  private String info2;
   private BigDecimal price;
+  private BigDecimal price2;
 
-  public SmallMessageCompexKey() {}
-  public SmallMessageCompexKey(String id) {
+  public SmallMessage() {}
+  public SmallMessage(String id) {
     this.id = id;
   }
 
-  public SmallMessageCompexKey(Integer amount, String info, BigDecimal price) {
+  public SmallMessage(Integer amount, String info, BigDecimal price) {
     this (createId(amount, info, price));
     this.amount = amount;
     this.info = info;
@@ -59,6 +64,15 @@ public class SmallMessageCompexKey implements Serializable {
     this.info = info;
   }
 
+  @SpaceIndex(type= SpaceIndexType.BASIC)
+  public String getInfo2() {
+    return info2;
+  }
+
+  public void setInfo2(String info) {
+    this.info2 = info2;
+  }
+
   @SpaceIndex(type=SpaceIndexType.EXTENDED)
   public BigDecimal getPrice() {
     return price;
@@ -70,5 +84,14 @@ public class SmallMessageCompexKey implements Serializable {
 
   public String toString() {
     return "SmallMessageCompexKey[" + amount + ", " + info + ", " + price + "]";
+  }
+
+  @SpaceIndex(type=SpaceIndexType.EXTENDED)
+  public BigDecimal getPrice2() {
+    return price2;
+  }
+
+  public void setPrice2(BigDecimal price2) {
+    this.price2 = price2;
   }
 }

@@ -1,0 +1,1 @@
+set GIGA_LOCATION=C:\DevTools\gigaspaces-xap-premium-10.0.1-ga\
